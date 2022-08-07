@@ -1,5 +1,5 @@
 {
-  "name": "e-graph",
+  "name": "@ahaoboy/p-graph",
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",
