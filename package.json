@@ -1,0 +1,43 @@
+{
+  "name": "e-graph",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "import": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "dev": "tsc -w",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "tsx": "^3.8.0",
+    "@parcel/graph": "latest",
+    "@types/benchmark": "latest",
+    "@types/jest": "latest",
+    "@types/node": "latest",
+    "@types/sinon": "latest",
+    "benchmark": "latest",
+    "rimraf": "latest",
+    "sinon": "latest",
+    "traverse": "latest",
+    "tsup": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vitest": "latest"
+  },
+  "keywords": [],
+  "author": "阿豪boy",
+  "license": "ISC"
+}

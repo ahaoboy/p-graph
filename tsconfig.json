@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "outDir": "dist",
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "experimentalDecorators": true,
+    "target": "esnext",
+    "strict": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "declaration": true,
+    "downlevelIteration": true,
+    "emitDeclarationOnly": false,
+    "typeRoots": ["node_modules/@types"]
+  },
+  "include": [
+    "src/**/*",
+    "node_modules/@types",
+  ],
+  "exclude": ["node_modules", "dist"]
+}
