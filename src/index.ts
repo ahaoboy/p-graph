@@ -1,3 +1,3 @@
 export * from './AdjacencyList'
-export * from './graph'
+export * from './Graph'
 export * from './type'
