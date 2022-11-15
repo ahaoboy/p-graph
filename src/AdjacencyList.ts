@@ -1216,5 +1216,3 @@ export class EdgeTypeMap extends SharedTypeMap {
     return hash;
   }
 }
-
-const s = new AdjacencyList();
