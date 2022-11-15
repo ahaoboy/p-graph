@@ -1,6 +1,6 @@
 {
   "name": "@ahaoboy/p-graph",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "",
   "main": "./dist/cjs/index.js",
   "import": "./dist/index.js",
