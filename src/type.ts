@@ -94,7 +94,7 @@ export interface IAdjacencyList {
     to: number;
     type: number;
   }>;
-  hasEdge: (from: number, to: number, type?: number) => boolean;
+  hasEdge: (from: number, to: number, type?: number | number[]) => boolean;
   resizeEdges: (n: number) => boolean;
   hasInboundEdges: (to: number) => boolean;
   getNodeIdsConnectedTo: (nodeId: number, type?: number) => Array<number>;

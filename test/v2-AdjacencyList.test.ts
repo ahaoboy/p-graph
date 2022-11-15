@@ -1,7 +1,7 @@
 import { AdjacencyList } from "../src";
 import { test } from "./base/AdjacencyList";
 import { it, assert, describe } from "vitest";
-test(AdjacencyList);
+test();
 
 describe("AdjacencyList", () => {
   it("addEdge should resize edges array when necessary", () => {

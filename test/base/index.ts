@@ -1,6 +1,7 @@
-import { IGraph } from "@parcel-graph/type";
 import { it, assert, describe } from "vitest";
-export function test(Graph: new <T>() => IGraph<T>) {
+import { Graph } from "../../src";
+
+export function test() {
   describe("AdjacencyList", () => {
     it("constructor should initialize an empty graph", () => {
       const graph = new Graph();

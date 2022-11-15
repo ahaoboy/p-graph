@@ -1,8 +1,8 @@
-import { IGraph } from "@parcel-graph/type";
+import { Graph } from "../../src";
 import { it, assert, describe } from "vitest";
 import { toNodeId } from "../../src/share";
 import sinon from "sinon";
-export function test(Graph: new <T>() => IGraph<T>) {
+export function test() {
   describe("Graph", () => {
     it("constructor should initialize an empty graph", () => {
       let graph = new Graph();
@@ -17,13 +17,13 @@ export function test(Graph: new <T>() => IGraph<T>) {
       assert.equal(graph.nodes.get(id), node);
     });
 
-    // it("errors when traversing a graph with no root", () => {
-    //   let graph = new Graph();
+    it("errors when traversing a graph with no root", () => {
+      let graph = new Graph();
 
-    //   assert.throws(() => {
-    //     graph.traverse(() => {}, -1);
-    //   }, /A start node is required to traverse/);
-    // });
+      assert.throws(() => {
+        graph.traverse(() => {});
+      }, /A start node is required to traverse/);
+    });
 
     it("errors when traversing a graph with a startNode that doesn't belong", () => {
       let graph = new Graph();
@@ -84,6 +84,16 @@ export function test(Graph: new <T>() => IGraph<T>) {
       assert(graph.isOrphanedNode(nodeA));
       assert(!graph.isOrphanedNode(nodeB));
       assert(!graph.isOrphanedNode(nodeC));
+    });
+
+    it("removeEdge should throw if the edge doesn't exist", () => {
+      let graph = new Graph();
+      let nodeA = graph.addNode("a");
+      let nodeB = graph.addNode("b");
+
+      assert.throws(() => {
+        graph.removeEdge(nodeA, nodeB);
+      }, /Edge from 0 to 1 not found!/);
     });
 
     it("removeEdge should prune the graph at that edge", () => {

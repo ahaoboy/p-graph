@@ -53,7 +53,7 @@ function getNextEdgeCapacity(
   return Math.max(MIN_CAPACITY, newCapacity);
 }
 
-export class AdjacencyList implements IAdjacencyList {
+export class AdjacencyList  {
   _nodes: NodeTypeMap /*: NodeTypeMap<number | number> */;
   _edges: EdgeTypeMap /*: EdgeTypeMap<number | number> */;
   _typedArray: TypedArrayConstructor;
@@ -329,9 +329,17 @@ export class AdjacencyList implements IAdjacencyList {
   /**
    * Check if the graph has an edge connecting the `from` and `to` nodes.
    */
-  hasEdge(from: number, to: number, type: number | number = 1): boolean {
-    const hash = this._edges.hash(from, to, type);
-    return this._edges.addressOf(hash, from, to, type) !== null;
+  hasEdge(from: number, to: number, type: number | number[] = 1): boolean {
+    let hasEdge = (type: number) => {
+      const hash = this._edges.hash(from, to, type);
+      return this._edges.addressOf(hash, from, to, type) !== null;
+    };
+
+    if (Array.isArray(type)) {
+      return type.some(hasEdge);
+    }
+
+    return hasEdge(type);
   }
 
   /**
@@ -1208,3 +1216,6 @@ export class EdgeTypeMap extends SharedTypeMap {
     return hash;
   }
 }
+
+
+const s = new AdjacencyList()

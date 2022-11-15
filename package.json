@@ -19,25 +19,26 @@
     "test:ui": "vitest --ui",
     "test:run": "vitest run"
   },
-  "dependencies": {
-  },
   "devDependencies": {
-    "tsx": "^3.8.0",
-    "@parcel/graph": "latest",
-    "@types/benchmark": "latest",
-    "@types/jest": "latest",
-    "@types/node": "latest",
-    "@types/sinon": "latest",
-    "benchmark": "latest",
-    "rimraf": "latest",
-    "sinon": "latest",
-    "traverse": "latest",
-    "tsup": "latest",
-    "typescript": "latest",
-    "vite": "latest",
-    "vitest": "latest"
+    "@parcel/graph": "^2.8.0",
+    "@types/benchmark": "^2.1.2",
+    "@types/jest": "^29.2.2",
+    "@types/node": "^18.11.9",
+    "@types/sinon": "^10.0.13",
+    "benchmark": "^2.1.4",
+    "rimraf": "^3.0.2",
+    "sinon": "^14.0.2",
+    "traverse": "^0.6.7",
+    "tsup": "^6.4.0",
+    "tsx": "^3.12.0",
+    "typescript": "^4.8.4",
+    "vite": "^3.2.3",
+    "vitest": "^0.25.1"
   },
   "keywords": [],
   "author": "阿豪boy",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@parcel-graph/type": "^1.4.4"
+  }
 }

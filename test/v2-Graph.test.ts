@@ -2,7 +2,7 @@ import { Graph, AdjacencyList } from "../src";
 import { test } from "./base/Graph";
 import { it, assert, describe } from "vitest";
 
-test(Graph);
+test();
 
 describe("Graph", () => {
   it("circle edge", () => {

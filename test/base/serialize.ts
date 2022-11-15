@@ -1,8 +1,7 @@
-import { IGraph } from "@parcel-graph/type";
+import { Graph } from "../../src";
+
 import { it, assert, describe } from "vitest";
-export function testGraph(
-  Graph: (new <T>() => IGraph<T>) & { deserialize: any }
-) {
+export function testGraph() {
   describe("Graph", () => {
     it("serialize", () => {
       const graph = new Graph();

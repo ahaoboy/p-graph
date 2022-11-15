@@ -2,10 +2,16 @@ import { IGraph } from "./type";
 export const toNodeId = <T>(n: T) => n;
 export const fromNodeId = <T>(n: T) => n;
 export const nullthrows = <T>(
-  n: T | null | undefined,
-  info?: string
+  x: T | null | undefined,
+  message?: string
 ): NonNullable<T> => {
-  return n as any;
+  if (x != null) {
+    return x;
+  }
+  const error = new Error(
+    message !== undefined ? message : "Got unexpected " + x
+  );
+  throw error;
 };
 
 export function assertHasNode<T>(graph: IGraph<T>, nodeId: number) {

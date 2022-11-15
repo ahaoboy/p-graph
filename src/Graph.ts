@@ -116,7 +116,11 @@ export class Graph<N> implements IGraph<N> {
     return this.adjacencyList.addEdge(from, to, type);
   }
 
-  hasEdge(from: number, to: number, type = NullEdgeType): boolean {
+  hasEdge(
+    from: number,
+    to: number,
+    type: number | number[] = NullEdgeType
+  ): boolean {
     return this.adjacencyList.hasEdge(from, to, type);
   }
 
@@ -140,7 +144,7 @@ export class Graph<N> implements IGraph<N> {
     for (let { type, from } of this.adjacencyList.getInboundEdgesByType(
       nodeId
     )) {
-      this.removeEdge(
+      this._removeEdge(
         from,
         nodeId,
         type,
@@ -153,7 +157,7 @@ export class Graph<N> implements IGraph<N> {
     for (let { type, to } of this.adjacencyList.getOutboundEdgesByType(
       nodeId
     )) {
-      this.removeEdge(nodeId, to, type);
+      this._removeEdge(nodeId, to, type);
     }
 
     let wasRemoved = this.nodes.delete(nodeId);
@@ -167,12 +171,27 @@ export class Graph<N> implements IGraph<N> {
     }
 
     for (let to of this.getNodeIdsConnectedFrom(nodeId, type)) {
-      this.removeEdge(nodeId, to, type);
+      this._removeEdge(nodeId, to, type);
     }
   }
 
-  // Removes edge and node the edge is to if the node is orphaned
   removeEdge(
+    from: number,
+    to: number,
+    type = 1,
+    removeOrphans: boolean = true
+  ) {
+    if (!this.adjacencyList.hasEdge(from, to, type)) {
+      throw new Error(
+        `Edge from ${fromNodeId(from)} to ${fromNodeId(to)} not found!`
+      );
+    }
+
+    return this._removeEdge(from, to, type, removeOrphans);
+  }
+
+  // Removes edge and node the edge is to if the node is orphaned
+  private _removeEdge(
     from: number,
     to: number,
     type = NullEdgeType,
@@ -251,13 +270,13 @@ export class Graph<N> implements IGraph<N> {
     }
 
     for (let child of childrenToRemove) {
-      this.removeEdge(fromNodeId, child, type);
+      this._removeEdge(fromNodeId, child, type);
     }
   }
 
   traverse<TContext>(
     visit: any,
-    startNodeId: number,
+    startNodeId?: number | undefined,
     type = NullEdgeType
   ): any {
     return this.dfs({
@@ -296,7 +315,7 @@ export class Graph<N> implements IGraph<N> {
   }: {
     visit: any;
     getChildren(nodeId: number): Array<number>;
-    startNodeId?: number;
+    startNodeId?: number | undefined;
   }): any {
     let traversalStartNode = nullthrows(
       startNodeId ?? this.rootNodeId,

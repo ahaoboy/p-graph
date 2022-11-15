@@ -1,7 +1,15 @@
-import { IAdjacencyList } from "../../src/type";
+import {
+  AdjacencyList,
+  EdgeTypeMap,
+  NodeTypeMap,
+} from "../../src/AdjacencyList";
 import { it, assert, describe } from "vitest";
 import { toNodeId } from "../../src/share";
-export function test(AdjacencyList: new () => IAdjacencyList) {
+import { Worker } from "worker_threads";
+import path from "path";
+import { SerializedAdjacencyList } from "../../src/type";
+
+export function test() {
   describe("AdjacencyList", () => {
     it("constructor should initialize an empty graph", () => {
       let stats = new AdjacencyList().stats;
@@ -17,18 +25,18 @@ export function test(AdjacencyList: new () => IAdjacencyList) {
     });
 
     // v1 don't have this
-    // it('addNode should resize nodes array when necessary', () => {
-    //   let graph = new AdjacencyList();
-    //   let size = graph.serialize().nodes.byteLength;
-    //   let a = graph.addNode();
-    //   let b = graph.addNode();
-    //   assert(size < (size = graph.serialize().nodes.byteLength));
-    //   graph.addEdge(a, b, 1);
-    //   graph.addEdge(a, b, 2);
-    //   graph.addEdge(a, b, 3);
-    //   graph.addEdge(a, b, 4);
-    //   assert(size < graph.serialize().nodes.byteLength);
-    // });
+    it("addNode should resize nodes array when necessary", () => {
+      let graph = new AdjacencyList();
+      let size = graph.serialize().nodes.byteLength;
+      let a = graph.addNode();
+      let b = graph.addNode();
+      assert(size < (size = graph.serialize().nodes.byteLength));
+      graph.addEdge(a, b, 1);
+      graph.addEdge(a, b, 2);
+      graph.addEdge(a, b, 3);
+      graph.addEdge(a, b, 4);
+      assert(size < graph.serialize().nodes.byteLength);
+    });
 
     it("removeEdge should remove an edge from the graph", () => {
       let graph = new AdjacencyList();
@@ -193,8 +201,10 @@ export function test(AdjacencyList: new () => IAdjacencyList) {
     it("addEdge should not replace a deleted edge if the edge was already added", () => {
       // Mock hash fn to generate collisions
       // $FlowFixMe[prop-missing]
+      // @ts-expect-error
       let originalHash = AdjacencyList.prototype.hash;
       // $FlowFixMe[prop-missing]
+      // @ts-expect-error
       AdjacencyList.prototype.hash = () => 1;
 
       let graph = new AdjacencyList();
@@ -208,32 +218,82 @@ export function test(AdjacencyList: new () => IAdjacencyList) {
       assert(graph.stats.edges === 1);
 
       // $FlowFixMe[prop-missing]
+      // @ts-expect-error
       AdjacencyList.prototype.hash = originalHash;
     });
 
-    // it("addEdge should replace a deleted edge", () => {
-    //   // Mock hash fn to generate collisions
-    //   // $FlowFixMe[prop-missing]
-    //   let originalHash = AdjacencyList.prototype.hash;
-    //   // $FlowFixMe[prop-missing]
-    //   AdjacencyList.prototype.hash = () => 1;
+    // TODO:  EdgeTypeMap has hash
+    it("addEdge should not replace a deleted edge if the edge was already added", () => {
+      // Mock hash fn to generate collisions
+      // $FlowFixMe[prop-missing]
+      let originalHash = EdgeTypeMap.prototype.hash;
+      // $FlowFixMe[prop-missing]
+      EdgeTypeMap.prototype.hash = () => 1;
 
-    //   let graph = new AdjacencyList();
-    //   let n0 = graph.addNode();
-    //   let n1 = graph.addNode();
-    //   graph.addEdge(n0, n1, 2);
-    //   graph.removeEdge(n0, n1, 2);
-    //   assert(graph.addEdge(n0, n1, 2));
-    //   assert(graph.stats.edges === 1);
-    //   assert(graph.stats.deleted === 1);
-    //   // Resize to reclaim deleted edge space.
-    //   graph.resizeEdges(4);
-    //   assert(graph.stats.edges === 1);
-    //   assert(graph.stats.deleted === 0);
+      let graph = new AdjacencyList();
+      let n0 = graph.addNode();
+      let n1 = graph.addNode();
+      let n2 = graph.addNode();
+      graph.addEdge(n0, n1, 1);
+      graph.addEdge(n1, n2, 1);
+      graph.removeEdge(n1, n2, 1);
+      assert(graph.addEdge(n0, n1, 1) === false);
+      assert(graph.stats.edges === 1);
 
-    //   // $FlowFixMe[prop-missing]
-    //   AdjacencyList.prototype.hash = originalHash;
-    // });
+      // $FlowFixMe[prop-missing]
+      EdgeTypeMap.prototype.hash = originalHash;
+    });
+
+    it("addEdge should replace a deleted edge", () => {
+      // Mock hash fn to generate collisions
+      // $FlowFixMe[prop-missing]
+      // @ts-expect-error
+      let originalHash = AdjacencyList.prototype.hash;
+      // $FlowFixMe[prop-missing]
+      // @ts-expect-error
+      AdjacencyList.prototype.hash = () => 1;
+
+      let graph = new AdjacencyList();
+      let n0 = graph.addNode();
+      let n1 = graph.addNode();
+      graph.addEdge(n0, n1, 2);
+      graph.removeEdge(n0, n1, 2);
+      assert(graph.addEdge(n0, n1, 2));
+      assert(graph.stats.edges === 1);
+      assert.equal(graph.stats.deleted, 1);
+
+      // Resize to reclaim deleted edge space.
+      graph.resizeEdges(4);
+      assert.equal(graph.stats.deleted, 0);
+
+      // $FlowFixMe[prop-missing]
+      // @ts-expect-error
+      AdjacencyList.prototype.hash = originalHash;
+    });
+
+    it("addEdge should replace a deleted edge", () => {
+      // Mock hash fn to generate collisions
+      // $FlowFixMe[prop-missing]
+      let originalHash = EdgeTypeMap.prototype.hash;
+      // $FlowFixMe[prop-missing]
+      EdgeTypeMap.prototype.hash = () => 1;
+
+      let graph = new AdjacencyList();
+      let n0 = graph.addNode();
+      let n1 = graph.addNode();
+      graph.addEdge(n0, n1, 2);
+      graph.removeEdge(n0, n1, 2);
+      assert(graph.addEdge(n0, n1, 2));
+      assert(graph.stats.edges === 1);
+      assert.equal(graph.stats.deleted, 1);
+
+      // Resize to reclaim deleted edge space.
+      graph.resizeEdges(4);
+      assert.equal(graph.stats.deleted, 0);
+
+      // $FlowFixMe[prop-missing]
+      EdgeTypeMap.prototype.hash = originalHash;
+    });
   });
   it("getNodeIdsConnectedTo and getNodeIdsConnectedFrom should remove duplicate values", () => {
     let graph = new AdjacencyList();
@@ -246,50 +306,64 @@ export function test(AdjacencyList: new () => IAdjacencyList) {
     assert.deepEqual(graph.getNodeIdsConnectedFrom(a, -1), [b, c]);
     assert.deepEqual(graph.getNodeIdsConnectedTo(b, -1), [a]);
   });
-  // describe('deserialize', function () {
-  //   this.timeout(10000);
 
-  //   it('should share the underlying data across worker threads', async () => {
-  //     let graph = new AdjacencyList();
-  //     let n0 = graph.addNode();
-  //     let n1 = graph.addNode();
-  //     graph.addEdge(n0, n1, 1);
-  //     graph.addEdge(n0, n1, 2);
+  it("hasEdge should accept an array of edge types", () => {
+    let graph = new AdjacencyList();
+    let a = graph.addNode();
+    let b = graph.addNode();
+    let c = graph.addNode();
 
-  //     let worker = new Worker(
-  //       path.join(__dirname, 'integration/adjacency-list-shared-array.js'),
-  //     );
+    graph.addEdge(a, b, 1);
+    graph.addEdge(b, c, 2);
 
-  //     let originalSerialized = graph.serialize();
-  //     let originalNodes = [...originalSerialized.nodes];
-  //     let originalEdges = [...originalSerialized.edges];
-  //     let work = new Promise(resolve => worker.on('message', resolve));
-  //     worker.postMessage(originalSerialized);
-  //     let received = AdjacencyList.deserialize(await work);
-  //     await worker.terminate();
+    assert.ok(!graph.hasEdge(a, b, [2, 3]));
+    assert.ok(graph.hasEdge(a, b, [1, 2]));
+    assert.ok(!graph.hasEdge(b, c, [1, 3]));
+    assert.ok(graph.hasEdge(b, c, [2, 3]));
+  });
 
-  //     assert.deepEqual(received.serialize().nodes, graph.serialize().nodes);
-  //     assert.deepEqual(received.serialize().edges, graph.serialize().edges);
+  describe("deserialize", function () {
+    it("should share the underlying data across worker threads", async () => {
+      let graph = new AdjacencyList();
+      let n0 = graph.addNode();
+      let n1 = graph.addNode();
+      graph.addEdge(n0, n1, 1);
+      graph.addEdge(n0, n1, 2);
 
-  //     originalNodes.forEach((v, i) => {
-  //       if (i < NodeTypeMap.HEADER_SIZE) {
-  //         assert.equal(v, received.serialize().nodes[i]);
-  //         assert.equal(v, graph.serialize().nodes[i]);
-  //       } else {
-  //         assert.equal(v * 2, received.serialize().nodes[i]);
-  //         assert.equal(v * 2, graph.serialize().nodes[i]);
-  //       }
-  //     });
+      let worker = new Worker(path.join(process.cwd(), "test/worker.js"));
 
-  //     originalEdges.forEach((v, i) => {
-  //       if (i < EdgeTypeMap.HEADER_SIZE) {
-  //         assert.equal(v, received.serialize().edges[i]);
-  //         assert.equal(v, graph.serialize().edges[i]);
-  //       } else {
-  //         assert.equal(v * 2, received.serialize().edges[i]);
-  //         assert.equal(v * 2, graph.serialize().edges[i]);
-  //       }
-  //     });
-  //   });
-  // });
+      let originalSerialized = graph.serialize();
+      let originalNodes = [...originalSerialized.nodes];
+      let originalEdges = [...originalSerialized.edges];
+      let work = new Promise<SerializedAdjacencyList<number>>((resolve) =>
+        worker.on("message", resolve)
+      );
+      worker.postMessage(originalSerialized);
+      let received = AdjacencyList.deserialize(await work);
+      await worker.terminate();
+
+      assert.deepEqual(received.serialize().nodes, graph.serialize().nodes);
+      assert.deepEqual(received.serialize().edges, graph.serialize().edges);
+
+      originalNodes.forEach((v, i) => {
+        if (i < NodeTypeMap._HEADER_SIZE) {
+          assert.equal(v, received.serialize().nodes[i]);
+          assert.equal(v, graph.serialize().nodes[i]);
+        } else {
+          assert.equal(v * 2, received.serialize().nodes[i]);
+          assert.equal(v * 2, graph.serialize().nodes[i]);
+        }
+      });
+
+      originalEdges.forEach((v, i) => {
+        if (i < EdgeTypeMap._HEADER_SIZE) {
+          assert.equal(v, received.serialize().edges[i]);
+          assert.equal(v, graph.serialize().edges[i]);
+        } else {
+          assert.equal(v * 2, received.serialize().edges[i]);
+          assert.equal(v * 2, graph.serialize().edges[i]);
+        }
+      });
+    });
+  });
 }
