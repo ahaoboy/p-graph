@@ -1,4 +1,4 @@
-import { IGraph } from "./type";
+import { Graph } from "./Graph";
 export const toNodeId = <T>(n: T) => n;
 export const fromNodeId = <T>(n: T) => n;
 export const nullthrows = <T>(
@@ -14,7 +14,7 @@ export const nullthrows = <T>(
   throw error;
 };
 
-export function assertHasNode<T>(graph: IGraph<T>, nodeId: number) {
+export function assertHasNode<T>(graph: Graph<T>, nodeId: number) {
   if (!graph.hasNode(nodeId)) {
     throw new Error("Does not have node " + nodeId);
   }

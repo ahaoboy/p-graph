@@ -27,41 +27,6 @@ export type SerializedGraph<N> = {
   rootNodeId: number;
 };
 
-export interface IGraph<N = number> {
-  addNode: (node: N) => number;
-  hasNode: (nodeId: number) => boolean;
-  getNode: (id: number) => N | null;
-  nodes: Map<number, N>;
-  getAllEdges: () => Generator<{
-    from: number;
-    to: number;
-    type: number;
-  }>;
-  addEdge: (from: number, to: number, type?: number) => boolean;
-  removeEdge: (from: number, to: number, type?: number) => boolean;
-  serialize: () => SerializedGraph<N>
-  getNodeIdsConnectedTo: (nodeId: number, type?: number) => Array<number>;
-  getNodeIdsConnectedFrom: (nodeId: number, type?: number) => Array<number>;
-  hasEdge: (from: number, to: number, type?: number) => boolean;
-  resizeEdges: (n: number) => boolean;
-
-  traverse<Context>(
-    visit: (node?: N, c?: Context) => void,
-    startNodeId: number,
-    type?: number
-  ): void;
-
-  replaceNodeIdsConnectedTo(
-    fromNodeId: number,
-    toNodeIds: number[],
-    replaceFilter?: (nodeId: number) => boolean,
-    type?: number
-  ): void;
-
-  setRootNodeId: (nodeId: number) => void;
-  isOrphanedNode: (nodeId: number) => boolean;
-  removeNode: (nodeId: number) => boolean;
-}
 export type NodeId = number;
 export type TraversalActions = {
   skipChildren: () => void;
@@ -80,28 +45,6 @@ export type AdjacencyListStats = {
   edges: number;
   deleted: number;
 };
-export interface IAdjacencyList {
-  stats: AdjacencyListStats;
-  addNode: () => number;
-  addEdge: (from: number, to: number, type?: number) => boolean;
-  removeEdge: (from: number, to: number, type?: number) => boolean;
-  serialize: () => {
-    nodes: TypedArray;
-    edges: TypedArray;
-  };
-  getAllEdges: () => Generator<{
-    from: number;
-    to: number;
-    type: number;
-  }>;
-  hasEdge: (from: number, to: number, type?: number | number[]) => boolean;
-  resizeEdges: (n: number) => boolean;
-  hasInboundEdges: (to: number) => boolean;
-  getNodeIdsConnectedTo: (nodeId: number, type?: number) => Array<number>;
-  getNodeIdsConnectedFrom: (nodeId: number, type?: number) => Array<number>;
-  getOutboundEdgesByType: (from: number) => { type: number; to: number }[];
-  getInboundEdgesByType: (to: number) => { type: number; from: number }[];
-}
 
 export type TypedArrayConstructor =
   | Uint32ArrayConstructor

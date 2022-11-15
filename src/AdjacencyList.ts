@@ -1,4 +1,4 @@
-import type { IAdjacencyList, TypedArrayConstructor, TypedArray } from "./type";
+import type { TypedArrayConstructor, TypedArray } from "./type";
 import {
   AllEdgeTypes,
   SerializedAdjacencyList,
@@ -53,7 +53,7 @@ function getNextEdgeCapacity(
   return Math.max(MIN_CAPACITY, newCapacity);
 }
 
-export class AdjacencyList  {
+export class AdjacencyList {
   _nodes: NodeTypeMap /*: NodeTypeMap<number | number> */;
   _edges: EdgeTypeMap /*: EdgeTypeMap<number | number> */;
   _typedArray: TypedArrayConstructor;
@@ -1217,5 +1217,4 @@ export class EdgeTypeMap extends SharedTypeMap {
   }
 }
 
-
-const s = new AdjacencyList()
+const s = new AdjacencyList();

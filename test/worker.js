@@ -1,6 +1,3 @@
-// import { parentPort } from "worker_threads";
-// import { AdjacencyList, NodeTypeMap, EdgeTypeMap } from "../dist";
-
 const { parentPort } = require("worker_threads");
 const { AdjacencyList, NodeTypeMap, EdgeTypeMap } = require("../dist/cjs");
 parentPort.once("message", (serialized) => {

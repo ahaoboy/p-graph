@@ -1,4 +1,4 @@
-import type { IGraph, TraversalActions } from "./type";
+import type { TraversalActions } from "./type";
 import { AdjacencyList } from "./AdjacencyList";
 import { assert, nullthrows, fromNodeId } from "./share";
 import {
@@ -52,7 +52,7 @@ export function mapVisitor(
   return mapped;
 }
 
-export class Graph<N> implements IGraph<N> {
+export class Graph<N> {
   nodes: Map<number, N>;
   adjacencyList: AdjacencyList;
   rootNodeId?: number | undefined;

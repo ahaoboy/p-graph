@@ -1,4 +1,4 @@
-import { Graph, AdjacencyList } from "../src";
+import { Graph } from "../src";
 import { test } from "./base/Graph";
 import { it, assert, describe } from "vitest";
 
